@@ -2,6 +2,8 @@ import parselmouth
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+# a segment will be considered a note if loudness is greater than this, and a rest otherwise
+LOUDNESS_THRESHOLD = 70
 
 class Segment():
     """
@@ -15,15 +17,29 @@ class Segment():
         self.start = start
         self.end = end
         self.frames = frames
+        self.n_frames = len(frames.items())
+        self.label = 'R' if self.average_intensity()<LOUDNESS_THRESHOLD else 'N'
 
     def __iter__(self):
-        return iter((self.start,self.end))
+        return iter((self.start,self.end, self.label))
 
     def __repr__(self):
-        return str((self.start,self.end))
+        return str((self.start,self.end, self.label))
     
     def __str__(self):
         return repr(self)
+    
+    def get_frames(self, start,end):
+        return {time:props for time,props in self.frames.items() if start <= time < end}
+    
+    def average_intensity(self):
+        return np.average([frame["intensity"] for frame in self.frames.values()])
+    
+    # def voiced_frames(self):
+        # return {}
+    
+        
+
     
 def draw_pitch(pitch):
     # taken from parselmouth docs
@@ -44,7 +60,7 @@ def draw_intensity(intensity):
         intensity_values.append(value)
     plt.plot(intensity.xs(),intensity_values)
 
-def sound_properties(sound, voiced_frames_only = True, time_step = None):
+def sound_properties(sound, voiced_frames_only = False, time_step = None):
     """Generate an array containing a vector of pitch, loudness and voiced/unvoiced decision for each frame"""
     frames = {}
     pitch = sound.to_pitch()
@@ -65,7 +81,6 @@ def sound_properties(sound, voiced_frames_only = True, time_step = None):
     voiced_only = {time:props for time,props in frames.items() if props["is_voiced"]}
     # unvoiced_only = tuple(frame for frame in properties_arr if not frame["is_voiced"])
     # print(set(frame["intensity"] for frame in unvoiced_only))
-    # intensity has value only in unvoiced frames??
     if voiced_frames_only:
         return voiced_only
     else:
@@ -80,18 +95,18 @@ def note_segments(frames):
     note_start = 0
     search_mode = "max"
     current_segment_frames = {}
-    # rewrite this w no repetition if I have time
     for time,frame in frames.items():
-        if np.isnan(frame["intensity"]):
+        current_segment_frames[time]=frame
+        # skip if voiceless
+        if np.isnan(frame["intensity"]) or np.isnan(frame["pitch"]):
             continue
         if not potential_min_or_max:
-            potential_min_or_max = frame["intensity"]
-            current_segment_frames[time]=frame
+            potential_min_or_max = 0
 
         if (search_mode == "max" and frame["intensity"] > potential_min_or_max
         or search_mode=="min" and frame["intensity"] < potential_min_or_max):
             # note_segments.append((note_start, time))
-            note_segments.append(Segment(note_start,time, current_segment_frames))
+            note_segments.append(Segment(note_start,time, current_segment_frames.copy()))
             note_start = time
             potential_min_or_max = frame["intensity"]
             search_mode="min" if search_mode=="max" else "max"
@@ -104,8 +119,8 @@ def export_labels(note_segments, filename="labels.txt"):
     audacity documentation: https://ttmanual.audacityteam.org/man/Label_Tracks"""
     with open(filename, 'w') as file:
         for i, segment in enumerate(note_segments):
-            start, end = segment
-            file.write(str(start)+'\t'+str(end)+'\t'+"note "+str(i)+"\n")
+            start, end, label = segment
+            file.write(str(start)+'\t'+str(end)+'\t'+str(label)+"\n")
     file.close()
 
 
