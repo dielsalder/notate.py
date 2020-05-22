@@ -9,9 +9,9 @@ class Segment:
     end: int, end time
     frames: list of dict of frame properties"""
     def __init__(self,start, end, frames):
-        this.start = start
-        this.end = end
-        this.frames = frames
+        self.start = start
+        self.end = end
+        self.frames = frames
     
 def draw_pitch(pitch):
     # taken from parselmouth docs
