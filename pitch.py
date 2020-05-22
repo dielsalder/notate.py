@@ -4,6 +4,8 @@ import seaborn as sns
 import numpy as np
 # a segment will be considered a note if loudness is greater than this, and a rest otherwise
 LOUDNESS_THRESHOLD = 70
+# a segment will be considered a note if fraction_voiced is greater than this, and a rest otherwise
+FRACTION_VOICED_THRESHOLD=0.5
 
 class Segment():
     """
@@ -18,7 +20,8 @@ class Segment():
         self.end = end
         self.frames = frames
         self.n_frames = len(frames.items())
-        self.label = 'R' if self.average_intensity()<LOUDNESS_THRESHOLD else 'N'
+        # self.label = 'R' if self.average_intensity()<LOUDNESS_THRESHOLD else 'N'
+        self.label = 'N' if self.fraction_voiced()<FRACTION_VOICED_THRESHOLD else 'R'
 
     def __iter__(self):
         return iter((self.start,self.end, self.label))
@@ -35,10 +38,11 @@ class Segment():
     def average_intensity(self):
         return np.average([frame["intensity"] for frame in self.frames.values()])
     
-    # def voiced_frames(self):
-        # return {}
+    def voiced_frames(self):
+        return {time:props for time,props in self.frames.items() if props["is_voiced"]}
     
-        
+    def fraction_voiced(self):
+        return len(self.voiced_frames())/self.n_frames
 
     
 def draw_pitch(pitch):
