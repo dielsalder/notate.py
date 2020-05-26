@@ -1,8 +1,8 @@
 import parselmouth
 import numpy as np
-from util import *
 from SoundProperties import SoundProperties
 from TimeInterval import TimeInterval
+from SegmentSet import SegmentSet
 
 
 def note_segments(frames):
