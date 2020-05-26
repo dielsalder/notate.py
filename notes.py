@@ -116,19 +116,10 @@ def export_labels(note_segments, filename="labels.txt"):
             file.write(str(start)+'\t'+str(end)+'\t'+str(label)+"\n")
     file.close()
 
-def get_notes():
-    pass
-
-# something to extract energy + produce vectors for each frame
-sns.set()
-snd = parselmouth.Sound("data/scale1.wav")
-# already works quite well with separated notes! all the ones here are detected
-pitch = snd.to_pitch()
-plt.figure()
-# draw_intensity(snd.to_intensity())
-draw_pitch(pitch)
-plt.show()
-sound_properties = sound_properties(snd)
-note_segments = note_segments(sound_properties)
-print(note_segments)
-export_labels(note_segments)
+def get_notes(filename, export = False):
+    snd = parselmouth.Sound(filename)
+    props = sound_properties(snd)
+    segments = note_segments(props)
+    if export:
+        export_labels(segments)
+    return segments
