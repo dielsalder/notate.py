@@ -1,7 +1,6 @@
 import parselmouth
-import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
+from util import *
 # a segment will be considered a note if loudness is greater than this, and a rest otherwise
 LOUDNESS_THRESHOLD = 70
 # a segment will be considered a note if fraction_voiced is greater than this, and a rest otherwise
@@ -50,25 +49,6 @@ class Segment():
         return np.average([frame["pitch"] for frame in self.voiced_frames().values()])
 
     
-def draw_pitch(pitch):
-    # taken from parselmouth docs
-    # Extract selected pitch contour, and
-    # replace unvoiced samples by NaN to not plot
-    pitch_values = pitch.selected_array['frequency']
-    pitch_values[pitch_values==0] = np.nan
-    plt.plot(pitch.xs(), pitch_values, 'o', markersize=5, color='w')
-    plt.plot(pitch.xs(), pitch_values, 'o', markersize=2)
-    plt.grid(False)
-    plt.ylim(0, pitch.ceiling)
-    plt.ylabel("fundamental frequency [Hz]")
-
-def draw_intensity(intensity):
-    intensity_values = []
-    for frame in range(1,intensity.get_number_of_frames()+1):
-        value = intensity.get_value(intensity.get_time_from_frame_number(frame))
-        intensity_values.append(value)
-    plt.plot(intensity.xs(),intensity_values)
-
 def sound_properties(sound, voiced_frames_only = False, time_step = None):
     """Generate an array containing a vector of pitch, loudness and voiced/unvoiced decision for each frame"""
     frames = {}
@@ -136,6 +116,8 @@ def export_labels(note_segments, filename="labels.txt"):
             file.write(str(start)+'\t'+str(end)+'\t'+str(label)+"\n")
     file.close()
 
+def get_notes():
+    pass
 
 # something to extract energy + produce vectors for each frame
 sns.set()
