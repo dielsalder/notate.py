@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no" ?>
 <!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
-<project xmlns="http://audacity.sourceforge.net/xml/" projname="scale1_data" version="1.3.0" audacityversion="2.1.3" sel0="3.4515769378" sel1="3.4515769378" vpos="0" h="2.9242306224" zoom="629.5673076923" rate="48000.0" snapto="off" selectionformat="hh:mm:ss + milliseconds" frequencyformat="Hz" bandwidthformat="octaves">
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="scale1_data" version="1.3.0" audacityversion="2.1.3" sel0="0.7886368843" sel1="0.7886368843" vpos="0" h="0.0000000000" zoom="629.5673076923" rate="48000.0" snapto="off" selectionformat="hh:mm:ss + milliseconds" frequencyformat="Hz" bandwidthformat="octaves">
 	<tags/>
 	<wavetrack name="scale1" channel="0" linked="1" mute="0" solo="0" height="150" minimized="0" isSelected="1" rate="48000" gain="1.0" pan="0.0">
 		<waveclip offset="0.00000000">
@@ -34,5 +34,16 @@
 		<label t="2.1316227568" t1="2.1316227568" title="2"/>
 		<label t="2.8023214968" t1="2.8023214968" title="3"/>
 		<label t="3.4515769378" t1="3.4515769378" title="4"/>
+	</labeltrack>
+	<labeltrack name="Label Track" numlabels="9" height="73" minimized="0" isSelected="0">
+		<label t="0.0000000000" t1="0.0400000000" title="note 0"/>
+		<label t="0.0400000000" t1="0.0480000000" title="note 1"/>
+		<label t="0.0480000000" t1="0.2320000000" title="note 2"/>
+		<label t="0.2320000000" t1="0.2480000000" title="note 3"/>
+		<label t="0.2480000000" t1="0.3040000000" title="note 4"/>
+		<label t="0.3040000000" t1="0.3280000000" title="note 5"/>
+		<label t="0.3280000000" t1="0.3440000000" title="note 6"/>
+		<label t="0.3440000000" t1="0.3520000000" title="note 7"/>
+		<label t="0.3520000000" t1="0.3840000000" title="note 8"/>
 	</labeltrack>
 </project>

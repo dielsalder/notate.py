@@ -7,6 +7,7 @@ LOUDNESS_THRESHOLD = 70
 # a segment will be considered a note if fraction_voiced is greater than this, and a rest otherwise
 FRACTION_VOICED_THRESHOLD=0.5
 
+# data structure for interval set + frames + labels?
 class Segment():
     """
     start: float, start time
@@ -43,6 +44,10 @@ class Segment():
     
     def fraction_voiced(self):
         return len(self.voiced_frames())/self.n_frames
+    
+    def pitch(self):
+        """average pitch of segment"""
+        return np.average([frame["pitch"] for frame in self.voiced_frames().values()])
 
     
 def draw_pitch(pitch):
@@ -67,9 +72,11 @@ def draw_intensity(intensity):
 def sound_properties(sound, voiced_frames_only = False, time_step = None):
     """Generate an array containing a vector of pitch, loudness and voiced/unvoiced decision for each frame"""
     frames = {}
+    # could smooth pitch here using parselmouth
     pitch = sound.to_pitch()
     intensity = sound.to_intensity()
     end_time = sound.get_end_time()
+    # time step being different for pitch and intensity messes this up, so use intensity time step
     if not time_step:
         time_step = intensity.get_time_step()
 
@@ -117,6 +124,8 @@ def note_segments(frames):
             current_segment_frames={}
     return note_segments
 
+# segment notes by pitch --> step detection
+# https://stackoverflow.com/questions/48000663/step-detection-in-one-dimensional-data
 
 def export_labels(note_segments, filename="labels.txt"):
     """export note segment intervals as audacity labels
@@ -130,13 +139,13 @@ def export_labels(note_segments, filename="labels.txt"):
 
 # something to extract energy + produce vectors for each frame
 sns.set()
-snd = parselmouth.Sound("data/twinkle_no_legato.wav")
+snd = parselmouth.Sound("data/scale1.wav")
 # already works quite well with separated notes! all the ones here are detected
-# pitch = snd.to_pitch()
-# plt.figure()
+pitch = snd.to_pitch()
+plt.figure()
 # draw_intensity(snd.to_intensity())
-# plt.show()
-# draw_pitch(pitch)
+draw_pitch(pitch)
+plt.show()
 sound_properties = sound_properties(snd)
 note_segments = note_segments(sound_properties)
 print(note_segments)
