@@ -13,7 +13,7 @@ class SegmentSet():
         self.labels:[float] = [None]
         self.sound_properties = sound_properties
 
-    def __check_rep(self):
+    def _check_rep(self):
         assert len(self.labels) == len(self.boundaries) - 1
     
     def __iter__(self):
@@ -35,29 +35,29 @@ class SegmentSet():
         i = self.find_index(time)
         self.boundaries.insert(i, time)
         self.labels.insert(i, None)
-        self.__check_rep()
+        self._check_rep()
 
     def remove_boundary(self, time):
         # also clean up self.labels -- how to do this?
         pass
 
-    def label(self, label:str, time = None, i = None):
-        if not i:
-            i = self.find_index(time)
+    def _label_one(self, i, label:str):
         self.labels[i] = label
-        self.__check_rep()
+        self._check_rep()
 
     def label_segment_type(self, time = None, i = None):
         if not i:
             i = self.find_index(time)
         start = self.boundaries[i]
         end = self.boundaries[i+1]
-        self.label('N' if self.sound_properties.segment_is_voiced(start, end) else 'R', i=i)
-        self.__check_rep()
+        self._label_one(i, 'N' if self.sound_properties.segment_is_voiced(start, end) else 'R')
+        self._check_rep()
 
-    def label_all(self):
-        for idx, _label in enumerate(self.labels):
-            self.label_segment_type(i=idx)
+    def label_using_fn(self, labeling_fn):
+        for i in range(len(self.labels)):
+            start_time, end_time,_ = self.get_interval(i)
+            self._label_one(i, labeling_fn(self, start_time, end_time))
+        self._check_rep()
 
     def __repr__(self):
         r = "SegmentSet containing: \n"

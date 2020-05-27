@@ -44,7 +44,7 @@ class SoundProperties():
 
     def fraction_voiced(self, start_time, end_time):
         start, end = self.slice_range(start_time, end_time)
-        all_frames = self.pitch[start:end]
+        all_frames = self.pitch_values[start:end]
         voiced_frames = [f for f in all_frames if not np.isnan(f)]
         return len(voiced_frames)/len(all_frames)
 

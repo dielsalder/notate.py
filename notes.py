@@ -32,9 +32,12 @@ def segment_by_loudness(sound_properties):
 
 def label_notes_and_rests(segments):
     """mark note segments as N and rests as R"""
-    def label_one(segments, i):
-        pass
-    pass
+    def detect_note_rest(segments, start_time, end_time):
+        if segments.sound_properties.segment_is_voiced(start_time, end_time):
+            return 'N'
+        else:
+            return 'R'
+    segments.label_using_fn(detect_note_rest)
         
 # segment notes by pitch --> step detection
 # https://stackoverflow.com/questions/48000663/step-detection-in-one-dimensional-data
@@ -44,4 +47,5 @@ def get_notes(filename):
     """driver code to go through entire note getting process"""
     props = SoundProperties(filename)
     segments = segment_by_loudness(props)
+    label_notes_and_rests(segments)
     return segments
