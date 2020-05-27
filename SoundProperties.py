@@ -1,5 +1,7 @@
 import parselmouth
 import numpy as np
+import bisect
+from parameters import FRACTION_VOICED_THRESHOLD
 class SoundProperties():
     """
     stores time, pitch, intensity and voiced-or-not at each frame. object to be queried for values at a frame or over an interval"""
@@ -27,25 +29,27 @@ class SoundProperties():
         ]
         self.voiced_values:[float] = [not np.isnan(pitch) for pitch in self.pitch_values]
 
-    def pitch_at_time(self, time):
-        pass
-
-    def intensity_at_time(self, time):
-        pass
+    def slice_range(self, start_time, end_time):
+        return (
+            bisect.bisect_left(self.times, start_time), 
+            bisect.bisect_right(self.times, end_time))
 
     def is_voiced_at_time(self, time):
+        return self.voiced_values[self.times.index(time)]
+
+    def average_pitch(self, start_time, end_time):
+        pass
+    def average_intensity(self, start_time, end_time):
         pass
 
-    def to_frame_interval(self, start_time, end_time):
-        pass
-    def interval_pitch(self, start_time, end_time):
-        pass
-    def interval_intensity(self, start_time, end_time):
-        pass
-    def interval_voiced_fraction(self, start_time, end_time):
-        pass
-    def interval_is_voiced(self, start_time, end_time):
-        pass
+    def fraction_voiced(self, start_time, end_time):
+        start, end = self.slice_range(start_time, end_time)
+        all_frames = self.pitch[start:end]
+        voiced_frames = [f for f in all_frames if not np.isnan(f)]
+        return len(voiced_frames)/len(all_frames)
+
+    def segment_is_voiced(self, start_time, end_time):
+        return self.fraction_voiced(start_time, end_time) >= FRACTION_VOICED_THRESHOLD
     def to_dict(self):
         frame_dict = {}
         for (time, pitch, intensity, voiced) in zip(self.times, self.pitch_values, self.intensity_values, self.voiced_values):
