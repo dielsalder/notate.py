@@ -18,7 +18,10 @@ class SegmentSet():
     
     def __iter__(self):
         for i, label in enumerate(self.labels):
-            yield Interval(self.boundaries[i], self.boundaries[i+1], label)
+            yield self.get_interval(i)
+    
+    def get_interval(self, i):
+        return Interval(self.boundaries[i], self.boundaries[i+1], self.labels[i])
 
     def find_index(self, time):
         '''
@@ -62,5 +65,12 @@ class SegmentSet():
             r += repr(interval)
             r += "\n"
         return r
-    def export(self):
-        pass
+
+    def export_labels(self, filename="labels.txt"):
+        """export note segment intervals as audacity labels
+        audacity documentation: https://ttmanual.audacityteam.org/man/Label_Tracks"""
+        with open(filename, 'w') as file:
+            for _i, segment in enumerate(self):
+                start, end, label = segment
+                file.write(str(start)+'\t'+str(end)+'\t'+str(label)+"\n")
+        file.close()
