@@ -38,8 +38,13 @@ class SegmentSet():
         self._check_rep()
 
     def remove_boundary(self, time):
-        # also clean up self.labels -- how to do this?
-        pass
+        # not tested
+        i = self._find_index(time)
+        if not self.boundaries[i] == time:
+            raise ValueError("Boundary not found")
+        del self.boundaries[i]
+        del self.labels[i]
+        self._check_rep()
 
     def _label_one(self, i, label:str):
         self.labels[i] = label
