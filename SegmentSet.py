@@ -9,7 +9,6 @@ class SegmentSet():
         # bisect for maintaining sorted list
         self.boundaries:[float] = [0.0,end_time]
         # label i in self.labels corresponds to the interval (i, i+1) in self.boundaries
-        # if there is no label, use None as placeholder
         self.labels:[float] = [None]
         self.sound_properties = sound_properties
 
