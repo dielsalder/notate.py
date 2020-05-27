@@ -18,12 +18,12 @@ class SegmentSet():
     
     def __iter__(self):
         for i, label in enumerate(self.labels):
-            yield self.get_interval(i)
+            yield self._get_interval(i)
     
-    def get_interval(self, i):
+    def _get_interval(self, i):
         return Interval(self.boundaries[i], self.boundaries[i+1], self.labels[i])
 
-    def find_index(self, time):
+    def _find_index(self, time):
         '''
         Locate index of the leftmost value equal to time
         taken from bisect docs
@@ -32,7 +32,7 @@ class SegmentSet():
         return i
 
     def add_boundary(self, time):
-        i = self.find_index(time)
+        i = self._find_index(time)
         self.boundaries.insert(i, time)
         self.labels.insert(i, None)
         self._check_rep()
@@ -45,17 +45,9 @@ class SegmentSet():
         self.labels[i] = label
         self._check_rep()
 
-    def label_segment_type(self, time = None, i = None):
-        if not i:
-            i = self.find_index(time)
-        start = self.boundaries[i]
-        end = self.boundaries[i+1]
-        self._label_one(i, 'N' if self.sound_properties.segment_is_voiced(start, end) else 'R')
-        self._check_rep()
-
     def label_using_fn(self, labeling_fn):
         for i in range(len(self.labels)):
-            start_time, end_time,_ = self.get_interval(i)
+            start_time, end_time,_ = self._get_interval(i)
             self._label_one(i, labeling_fn(self, start_time, end_time))
         self._check_rep()
 
